@@ -1,6 +1,8 @@
-package com.portoflio.backend.exception;
+package com.portoflio.backend.exception.controller;
 
 import com.portoflio.backend.exception.dto.ErrorMessage;
+import com.portoflio.backend.exception.model.ArgumentInvalidException;
+import com.portoflio.backend.exception.model.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;

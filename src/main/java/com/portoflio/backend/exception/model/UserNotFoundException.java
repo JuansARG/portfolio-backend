@@ -1,4 +1,4 @@
-package com.portoflio.backend.exception;
+package com.portoflio.backend.exception.model;
 
 public class UserNotFoundException extends Exception{
     public UserNotFoundException(String message) {

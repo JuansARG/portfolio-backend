@@ -1,9 +1,9 @@
 package com.portoflio.backend.service;
 
 import com.portoflio.backend.dto.input.UserPortfolioDTO;
-import com.portoflio.backend.exception.ArgumentInvalidException;
+import com.portoflio.backend.exception.model.ArgumentInvalidException;
 import com.portoflio.backend.model.UserPortfolio;
-import com.portoflio.backend.exception.UserNotFoundException;
+import com.portoflio.backend.exception.model.UserNotFoundException;
 
 import java.util.List;
 import java.util.Set;
