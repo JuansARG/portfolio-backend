@@ -8,4 +8,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface UserPortfolioRepository extends JpaRepository<UserPortfolio, Long>{
 
     UserPortfolio findByEmail(String email);
+    boolean existByEmail(String email);
 }
