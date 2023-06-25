@@ -1,6 +1,7 @@
 package com.portoflio.backend.controller;
 
-import com.portoflio.backend.dto.input.UserPortfolioDTO;
+import com.portoflio.backend.dto.input.InUserPortfolioDTO;
+import com.portoflio.backend.dto.output.OutUserPortfolioDTO;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
 import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.exception.model.UserNotFoundException;
@@ -22,20 +23,20 @@ public class UserPortfolioController {
     UserPortfolioService userPortfolioService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserPortfolio>> getAllUsers() throws UserNotFoundException {
-        List<UserPortfolio> users = userPortfolioService.getAllUsers();
+    public ResponseEntity<List<OutUserPortfolioDTO>> getAllUsers() throws UserNotFoundException {
+        List<OutUserPortfolioDTO> users = userPortfolioService.getAllUsers();
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<UserPortfolio> getUserById(@PathVariable Long id) throws UserNotFoundException {
-        UserPortfolio userDB = userPortfolioService.getUserById(id);
+    public ResponseEntity<OutUserPortfolioDTO> getUserById(@PathVariable Long id) throws UserNotFoundException {
+        OutUserPortfolioDTO userDB = userPortfolioService.getUserById(id);
         return ResponseEntity.status(HttpStatus.OK).body(userDB);
     }
 
     @PostMapping("/user/new")
-    public ResponseEntity<UserPortfolio> createUser(@Valid @RequestBody UserPortfolioDTO user) throws UserNotFoundException {
-        UserPortfolio newUser = userPortfolioService.createUser(user);
+    public ResponseEntity<OutUserPortfolioDTO> createUser(@Valid @RequestBody InUserPortfolioDTO user) throws UserNotFoundException {
+        OutUserPortfolioDTO newUser = userPortfolioService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
@@ -46,50 +47,50 @@ public class UserPortfolioController {
     }
 
     @PutMapping("/user/{id}")
-    public ResponseEntity<UserPortfolio> updateUser(@PathVariable Long id,@Valid @RequestBody UserPortfolioDTO user) throws UserNotFoundException {
-        UserPortfolio updatedUser = userPortfolioService.updateUser(id, user);
+    public ResponseEntity<OutUserPortfolioDTO> updateUser(@PathVariable Long id, @RequestBody InUserPortfolioDTO user) throws UserNotFoundException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.updateUser(id, user);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/title")
-    public ResponseEntity<UserPortfolio> updateUserTitle(@PathVariable Long id, @RequestParam String value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.updateUserTitle(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> updateUserTitle(@PathVariable Long id, @RequestParam String value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.updateUserTitle(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/profile")
-    public ResponseEntity<UserPortfolio> updateUserProfile(@PathVariable Long id, @RequestParam String value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.updateUserProfile(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> updateUserProfile(@PathVariable Long id, @RequestParam String value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.updateUserProfile(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/image")
-    public ResponseEntity<UserPortfolio> updateUserImage(@PathVariable Long id, @RequestParam String value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.updateUserImage(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> updateUserImage(@PathVariable Long id, @RequestParam String value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.updateUserImage(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/hard/skills")
-    public ResponseEntity<UserPortfolio> updateUserHardSkills(@PathVariable Long id, @RequestParam Set<String> value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.updateUserHardSkills(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> updateUserHardSkills(@PathVariable Long id, @RequestParam Set<String> value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.updateUserHardSkills(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/soft/skills")
-    public ResponseEntity<UserPortfolio> updateUserSoftSkills(@PathVariable Long id, @RequestParam Set<String> value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.updateUserSoftSkills(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> updateUserSoftSkills(@PathVariable Long id, @RequestParam Set<String> value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.updateUserSoftSkills(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/soft/skills/add")
-    public ResponseEntity<UserPortfolio> addSoftSkills(@PathVariable Long id, @RequestParam List<String> value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.addSoftSkills(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> addSoftSkills(@PathVariable Long id, @RequestParam List<String> value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.addSoftSkills(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/hard/skills/add")
-    public ResponseEntity<UserPortfolio> addHardSkills(@PathVariable Long id, @RequestParam List<String> value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio updatedUser = userPortfolioService.addHardSkills(id, value);
+    public ResponseEntity<OutUserPortfolioDTO> addHardSkills(@PathVariable Long id, @RequestParam List<String> value) throws UserNotFoundException, ArgumentInvalidException {
+        OutUserPortfolioDTO updatedUser = userPortfolioService.addHardSkills(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 }

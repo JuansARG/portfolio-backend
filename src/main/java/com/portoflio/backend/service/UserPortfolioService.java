@@ -1,8 +1,8 @@
 package com.portoflio.backend.service;
 
-import com.portoflio.backend.dto.input.UserPortfolioDTO;
+import com.portoflio.backend.dto.input.InUserPortfolioDTO;
+import com.portoflio.backend.dto.output.OutUserPortfolioDTO;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
-import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 
 import java.util.List;
@@ -10,16 +10,18 @@ import java.util.Set;
 
 public interface UserPortfolioService {
 
-    List<UserPortfolio> getAllUsers() throws UserNotFoundException;
-    UserPortfolio getUserById(Long id) throws UserNotFoundException;
-    UserPortfolio createUser(UserPortfolioDTO user) throws UserNotFoundException;
+    List<OutUserPortfolioDTO> getAllUsers() throws UserNotFoundException;
+    OutUserPortfolioDTO getUserById(Long id) throws UserNotFoundException;
+    OutUserPortfolioDTO createUser(InUserPortfolioDTO user) throws UserNotFoundException;
     void deleteUser(Long id) throws UserNotFoundException;
-    UserPortfolio updateUser(Long id, UserPortfolioDTO user) throws UserNotFoundException;
-    UserPortfolio updateUserTitle(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolio updateUserProfile(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolio updateUserImage(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolio updateUserHardSkills(Long id, Set<String> value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolio updateUserSoftSkills(Long id, Set<String> value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolio addSoftSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolio addHardSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
+
+    OutUserPortfolioDTO updateUser(Long id, InUserPortfolioDTO user) throws UserNotFoundException;
+
+    OutUserPortfolioDTO updateUserTitle(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
+    OutUserPortfolioDTO updateUserProfile(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
+    OutUserPortfolioDTO updateUserImage(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
+    OutUserPortfolioDTO updateUserHardSkills(Long id, Set<String> value) throws UserNotFoundException, ArgumentInvalidException;
+    OutUserPortfolioDTO updateUserSoftSkills(Long id, Set<String> value) throws UserNotFoundException, ArgumentInvalidException;
+    OutUserPortfolioDTO addSoftSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
+    OutUserPortfolioDTO addHardSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
 }

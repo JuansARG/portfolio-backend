@@ -8,7 +8,11 @@ import lombok.*;
 import java.util.Set;
 
 @Data
-public class UserPortfolioDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class InUserPortfolioDTO {
+
     @NotNull(message = "El nombre es obligatorio.")
     @NotEmpty(message = "El nombre es obligatorio.")
     private String name;
