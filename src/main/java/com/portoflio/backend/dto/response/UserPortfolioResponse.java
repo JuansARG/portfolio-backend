@@ -1,4 +1,4 @@
-package com.portoflio.backend.dto.output;
+package com.portoflio.backend.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OutUserPortfolioDTO {
+public class UserPortfolioResponse {
     private Long id;
     private String name;
     private String surname;
