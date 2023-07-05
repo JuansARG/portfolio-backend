@@ -12,16 +12,14 @@ public interface UserPortfolioService {
 
     List<UserPortfolioResponse> getAllUsers() throws UserNotFoundException;
     UserPortfolioResponse getUserById(Long id) throws UserNotFoundException;
-    UserPortfolioResponse createUser(UserPortfolioRequest user) throws UserNotFoundException;
+    UserPortfolioResponse createUser(UserPortfolioRequest userRequest) throws UserNotFoundException;
     void deleteUser(Long id) throws UserNotFoundException;
-
-    UserPortfolioResponse updateUser(Long id, UserPortfolioRequest user) throws UserNotFoundException;
-
+    UserPortfolioResponse updateUser(Long id, UserPortfolioRequest userRequest) throws UserNotFoundException;
     UserPortfolioResponse updateUserTitle(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
     UserPortfolioResponse updateUserProfile(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
     UserPortfolioResponse updateUserImage(Long id, String value) throws UserNotFoundException, ArgumentInvalidException;
     UserPortfolioResponse updateUserHardSkills(Long id, Set<String> value) throws UserNotFoundException, ArgumentInvalidException;
     UserPortfolioResponse updateUserSoftSkills(Long id, Set<String> value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolioResponse addSoftSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
-    UserPortfolioResponse addHardSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
+    UserPortfolioResponse addUserSoftSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
+    UserPortfolioResponse addUserHardSkills(Long id, List<String> value) throws UserNotFoundException, ArgumentInvalidException;
 }

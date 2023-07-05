@@ -17,7 +17,6 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
-@PreAuthorize("hasRole('ADMIN')")
 public class UserPortfolioController {
 
     @Autowired
@@ -42,6 +41,7 @@ public class UserPortfolioController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) throws UserNotFoundException {
         userPortfolioService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -85,13 +85,13 @@ public class UserPortfolioController {
 
     @PatchMapping("/user/{id}/soft/skills/add")
     public ResponseEntity<UserPortfolioResponse> addSoftSkills(@PathVariable Long id, @RequestParam List<String> value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolioResponse updatedUser = userPortfolioService.addSoftSkills(id, value);
+        UserPortfolioResponse updatedUser = userPortfolioService.addUserSoftSkills(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PatchMapping("/user/{id}/hard/skills/add")
     public ResponseEntity<UserPortfolioResponse> addHardSkills(@PathVariable Long id, @RequestParam List<String> value) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolioResponse updatedUser = userPortfolioService.addHardSkills(id, value);
+        UserPortfolioResponse updatedUser = userPortfolioService.addUserHardSkills(id, value);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 }

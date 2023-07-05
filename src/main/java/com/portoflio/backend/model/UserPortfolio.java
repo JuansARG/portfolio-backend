@@ -2,14 +2,20 @@ package com.portoflio.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
 import java.util.Set;
+
+@DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
+@ToString
 @Entity
 @Table(name = "users")
 public class UserPortfolio {
@@ -17,6 +23,7 @@ public class UserPortfolio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private boolean verified;
     private String name;
     private String surname;
     private int age;
@@ -34,14 +41,6 @@ public class UserPortfolio {
     @Column(name = "soft_skills")
     private Set<String> softSkills;
 
-    public void addHardSkills(List<String> skills){
-        hardSkills.addAll(skills);
-    }
-
-    public void addSoftSkills(List<String> skills){
-        softSkills.addAll(skills);
-    }
-
     @ManyToMany(
             fetch = FetchType.EAGER,
             cascade = CascadeType.PERSIST,
@@ -50,8 +49,16 @@ public class UserPortfolio {
     @JoinTable(
             name = "user_roles",
             joinColumns =
-                @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "role_id")
+            @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+
+    public void addHardSkills(List<String> skills){
+        hardSkills.addAll(skills);
+    }
+
+    public void addSoftSkills(List<String> skills){
+        softSkills.addAll(skills);
+    }
 }

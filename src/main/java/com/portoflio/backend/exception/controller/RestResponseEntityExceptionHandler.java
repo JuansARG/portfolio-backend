@@ -3,6 +3,7 @@ package com.portoflio.backend.exception.controller;
 import com.portoflio.backend.exception.dto.ErrorMessage;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -52,7 +53,10 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 //    }
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  @NotNull HttpHeaders headers,
+                                                                  @NotNull HttpStatusCode status,
+                                                                  @NotNull WebRequest request) {
         Map<String, Object> errors = new HashMap<>();
         ex.getBindingResult()
                 .getFieldErrors()

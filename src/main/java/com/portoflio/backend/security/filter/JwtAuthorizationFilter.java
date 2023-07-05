@@ -1,7 +1,7 @@
 package com.portoflio.backend.security.filter;
 
 import com.portoflio.backend.security.service.UserDetailsServiceImpl;
-import com.portoflio.backend.security.util.JwtUtils;
+import com.portoflio.backend.security.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,10 +19,10 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private JwtUtil jwtUtil;
 
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
@@ -34,21 +34,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         if( tokenHeader != null && tokenHeader.startsWith("Bearer ")){
             String token = tokenHeader.substring(7);
 
-            if (jwtUtils.isTokenValid(token)){
-                String username = jwtUtils.getUsername(token);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(
-                            userDetails.getUsername(),
-                            null,
-                            userDetails.getAuthorities()
-                        );
-
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            if (jwtUtil.isTokenValid(token) && !jwtUtil.isTokenExpired(token)){
+                String username = jwtUtil.getUsername(token);
+                UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                                                                        userDetails.getUsername(),
+                                                                        null,
+                                                                        userDetails.getAuthorities()
+                                                                    );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
         filterChain.doFilter(request, response);
-
     }
 }

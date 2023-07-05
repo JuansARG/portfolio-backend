@@ -1,16 +1,18 @@
 package com.portoflio.backend.security;
 
+import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.security.filter.JwtAuthenticationFilter;
 import com.portoflio.backend.security.filter.JwtAuthorizationFilter;
-import com.portoflio.backend.security.util.JwtUtils;
+import com.portoflio.backend.security.util.JwtUtil;
 import com.portoflio.backend.security.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,27 +21,33 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Autowired
-    JwtUtils jwtUtils;
+    JwtUtil jwtUtil;
     @Autowired
-    UserDetailsServiceImpl userDetailsService;
+    UserDetailsServiceImpl userDetailsServiceImpl;
     @Autowired
     JwtAuthorizationFilter jwtAuthorizationFilter;
+
+    @Autowired
+    UserPortfolioRepository userPortfolioRepository;
 
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
 
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtils);
+        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtil, userPortfolioRepository);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+        jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
 
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/auth/login").permitAll();
                     auth.requestMatchers("/api/v1/user/new").permitAll();
                     auth.anyRequest().authenticated();
                 })
@@ -53,12 +61,9 @@ public class SecurityConfig {
 
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception {
-        return httpSecurity
-                .getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder)
-                .and()
-                .build();
+        AuthenticationManagerBuilder builder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+        builder.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder);
+        return builder.build();
     }
 
     @Bean

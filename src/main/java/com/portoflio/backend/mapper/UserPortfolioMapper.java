@@ -9,10 +9,11 @@ import org.mapstruct.*;
 @Mapper( componentModel = MappingConstants.ComponentModel.SPRING )
 public interface UserPortfolioMapper {
 
-    UserPortfolioResponse toOutDTO(UserPortfolio userPortfolio);
+    UserPortfolioResponse toDTO(UserPortfolio userPortfolio);
     @Mappings({
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "roles", ignore = true)
+            @Mapping(target = "roles", ignore = true),
+            @Mapping(target = "verified", ignore = true)
     })
     UserPortfolio toUserPortfolio(UserPortfolioRequest userPortfolioRequest);
 }
