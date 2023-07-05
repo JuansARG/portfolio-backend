@@ -62,14 +62,20 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         UserPortfolio userPortfolio = userPortfolioRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("No existe un usuario con email " + user.getUsername()));
 
-        String token = jwtUtil.generateAccessToken(userPortfolio);
-
-        response.addHeader("Authorization", token);
-
         Map<String, Object> httpResponse = new HashMap<>();
-        httpResponse.put("token", token);
-        httpResponse.put("message", "Autenticación correcta");
-        httpResponse.put("status", 200);
+
+        if( !userPortfolio.isVerified() ) {
+            httpResponse.put("message", "Autenticación fallida, verifique la cuenta");
+            httpResponse.put("status", 400);
+        }else {
+            String token = jwtUtil.generateAccessToken(userPortfolio);
+
+            response.addHeader("Authorization", token);
+
+            httpResponse.put("token", token);
+            httpResponse.put("message", "Autenticación correcta");
+            httpResponse.put("status", 200);
+        }
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(httpResponse));
         response.setStatus(HttpStatus.OK.value());
@@ -85,7 +91,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                               AuthenticationException failed) throws IOException, ServletException {
 
         Map<String, Object> httpResponse = new HashMap<>();
-        httpResponse.put("message", "Autenticación fallida");
+        httpResponse.put("message", "Autenticación fallida, credenciales invalidas");
         httpResponse.put("status", 400);
 
         response.getWriter().write(new ObjectMapper().writeValueAsString(httpResponse));

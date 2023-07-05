@@ -34,11 +34,11 @@ public class UserPortfolioController {
         return ResponseEntity.status(HttpStatus.OK).body(userDB);
     }
 
-    @PostMapping("/user/new")
-    public ResponseEntity<UserPortfolioResponse> createUser(@Valid @RequestBody UserPortfolioRequest user) throws UserNotFoundException {
-        UserPortfolioResponse newUser = userPortfolioService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
+//    @PostMapping("/auth/signup")
+//    public ResponseEntity<UserPortfolioResponse> createUser(@Valid @RequestBody UserPortfolioRequest user) throws UserNotFoundException {
+//        UserPortfolioResponse newUser = userPortfolioService.createUser(user);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+//    }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

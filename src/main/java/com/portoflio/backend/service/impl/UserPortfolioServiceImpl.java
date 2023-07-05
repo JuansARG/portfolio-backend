@@ -10,6 +10,7 @@ import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.UserPortfolioService;
+import com.portoflio.backend.utils.EmailUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
     UserPortfolioMapper mapper;
     @Autowired
     UserPortfolioRepository userPortfolioRepository;
+    @Autowired
+    EmailUtils emailUtils;
 
     @Override
     public List<UserPortfolioResponse> getAllUsers() throws UserNotFoundException {
@@ -61,6 +64,9 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
             roles.setName(ERole.INVITED);
             newUser.setRoles(Set.of(roles));
         }
+
+        // corregir esto, necesito mandar a emailUtils el id...
+        emailUtils.sendMessageToVerify(newUser.getEmail());
         return mapper.toDTO(userPortfolioRepository.save(newUser));
     }
 

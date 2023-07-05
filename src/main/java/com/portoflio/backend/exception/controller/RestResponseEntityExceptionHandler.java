@@ -2,6 +2,7 @@ package com.portoflio.backend.exception.controller;
 
 import com.portoflio.backend.exception.dto.ErrorMessage;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
+import com.portoflio.backend.exception.model.NotVerifiedException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
@@ -64,5 +65,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             errors.put(error.getField(), error.getDefaultMessage());
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+
+    @ExceptionHandler(NotVerifiedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorMessage> handleNotVerifiedException(NotVerifiedException exception){
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.FORBIDDEN,
+                HttpStatus.FORBIDDEN.value(),
+                exception.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(message);
     }
 }

@@ -41,14 +41,13 @@ public class SecurityConfig {
 
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtil, userPortfolioRepository);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
-        jwtAuthenticationFilter.setFilterProcessesUrl("/auth/login");
+        jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
 
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/login").permitAll();
-                    auth.requestMatchers("/api/v1/user/new").permitAll();
+                    auth.requestMatchers("/api/v1/auth/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
@@ -62,8 +61,10 @@ public class SecurityConfig {
     @Bean
     AuthenticationManager authenticationManager(HttpSecurity httpSecurity, PasswordEncoder passwordEncoder) throws Exception {
         AuthenticationManagerBuilder builder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.userDetailsService(userDetailsServiceImpl).passwordEncoder(passwordEncoder);
-        return builder.build();
+        builder.userDetailsService(userDetailsServiceImpl)
+                .passwordEncoder(passwordEncoder);
+        return builder
+                .build();
     }
 
     @Bean
