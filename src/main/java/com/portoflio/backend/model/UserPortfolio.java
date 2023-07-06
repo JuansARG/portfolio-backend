@@ -53,6 +53,7 @@ public class UserPortfolio {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
+    private String passwordResetCode;
 
     public void addHardSkills(List<String> skills){
         hardSkills.addAll(skills);

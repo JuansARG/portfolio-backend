@@ -1,11 +1,13 @@
 package com.portoflio.backend.controller;
 
 import com.portoflio.backend.dto.request.ChangePasswordRequest;
+import com.portoflio.backend.dto.request.ResetPasswordRequest;
 import com.portoflio.backend.dto.request.UserPortfolioRequest;
 import com.portoflio.backend.dto.response.UserPortfolioResponse;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.service.AuthService;
 import com.portoflio.backend.service.UserPortfolioService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,10 +37,25 @@ public class AuthController {
     }
 
     @PostMapping("/{id}/change-password")
-    public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest userUpdate) throws UserNotFoundException {
-        authService.changePassword(id, userUpdate);
+    public ResponseEntity<?> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordRequest values) throws UserNotFoundException {
+        authService.changePassword(id, values);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @PostMapping("/password-reset-request")
+    public ResponseEntity<?> passwordResetRequest(@RequestParam String email) throws UserNotFoundException, MessagingException {
+        if(authService.passwordResetRequest(email)){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @PostMapping("/password-reset")
+    public ResponseEntity<?> passwordReset(@RequestParam String email, @RequestParam String code, @Valid @RequestBody ResetPasswordRequest value) throws UserNotFoundException {
+        if(authService.passwordReset(email, code, value)){
+            return ResponseEntity.status(HttpStatus.OK).build();
+        }
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 
 }

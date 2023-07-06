@@ -13,7 +13,8 @@ public interface UserPortfolioMapper {
     @Mappings({
             @Mapping(target = "id", ignore = true),
             @Mapping(target = "roles", ignore = true),
-            @Mapping(target = "verified", ignore = true)
+            @Mapping(target = "verified", ignore = true),
+            @Mapping(target = "passwordResetCode", ignore = true)
     })
     UserPortfolio toUserPortfolio(UserPortfolioRequest userPortfolioRequest);
 }

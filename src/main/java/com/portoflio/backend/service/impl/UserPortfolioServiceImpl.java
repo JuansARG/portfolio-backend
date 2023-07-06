@@ -64,10 +64,9 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
             roles.setName(ERole.INVITED);
             newUser.setRoles(Set.of(roles));
         }
-
-        // corregir esto, necesito mandar a emailUtils el id...
-        emailUtils.sendMessageToVerify(newUser.getEmail());
-        return mapper.toDTO(userPortfolioRepository.save(newUser));
+        UserPortfolio userSaved = userPortfolioRepository.save(newUser);
+        emailUtils.sendMessageToVerify(newUser.getEmail(), userSaved.getId());
+        return mapper.toDTO(userSaved);
     }
 
     @Override
@@ -107,7 +106,7 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
     public UserPortfolioResponse updateUserProfile(Long id, String profile) throws UserNotFoundException, ArgumentInvalidException {
         UserPortfolio userDB = userPortfolioRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
-        if ( profile.isEmpty() ) throw  new ArgumentInvalidException("La descripción del perfil no puede estar vacío.");
+        if ( profile.isEmpty() ) throw new ArgumentInvalidException("La descripción del perfil no puede estar vacío.");
         userDB.setProfile(profile);
         return mapper.toDTO(userPortfolioRepository.save(userDB));
     }
