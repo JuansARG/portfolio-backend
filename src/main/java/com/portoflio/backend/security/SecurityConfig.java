@@ -47,7 +47,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/v1/auth/**").permitAll();
+                    auth.requestMatchers("/api/v1/auth/signup").permitAll();
+                    auth.requestMatchers("/api/v1/auth/*/verify-account").permitAll();
+                    auth.requestMatchers("/api/v1/auth/password-reset-request").permitAll();
+                    auth.requestMatchers("/api/v1/auth/password-reset").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {

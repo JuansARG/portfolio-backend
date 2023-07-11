@@ -9,7 +9,6 @@ import com.portoflio.backend.service.AuthService;
 import com.portoflio.backend.service.UserPortfolioService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
 
-    @Autowired
-    UserPortfolioService userPortfolioService;
+    private final UserPortfolioService userPortfolioService;
+    private final AuthService authService;
 
-    @Autowired
-    AuthService authService;
+    public AuthController(UserPortfolioService userPortfolioService, AuthService authService) {
+        this.userPortfolioService = userPortfolioService;
+        this.authService = authService;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<UserPortfolioResponse> createUser(@Valid @RequestBody UserPortfolioRequest user) throws UserNotFoundException {

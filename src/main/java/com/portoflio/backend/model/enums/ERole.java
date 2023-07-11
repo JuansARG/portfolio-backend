@@ -1,4 +1,4 @@
-package com.portoflio.backend.model;
+package com.portoflio.backend.model.enums;
 
 public enum ERole {
     ADMIN,

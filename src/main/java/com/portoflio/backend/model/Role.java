@@ -1,5 +1,6 @@
 package com.portoflio.backend.model;
 
+import com.portoflio.backend.model.enums.ERole;
 import jakarta.persistence.*;
 import lombok.*;
 

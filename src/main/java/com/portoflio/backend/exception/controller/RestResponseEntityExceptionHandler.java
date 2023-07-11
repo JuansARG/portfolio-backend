@@ -3,6 +3,7 @@ package com.portoflio.backend.exception.controller;
 import com.portoflio.backend.exception.dto.ErrorMessage;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
 import com.portoflio.backend.exception.model.NotVerifiedException;
+import com.portoflio.backend.exception.model.TrainingNotFoundException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ErrorMessage> handleUserNotFoundException(UserNotFoundException exception){
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    }
+
+    @ExceptionHandler(TrainingNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorMessage> handleTrainingNotFoundException(TrainingNotFoundException exception){
         ErrorMessage message = new ErrorMessage(
                 HttpStatus.NOT_FOUND,
                 HttpStatus.NOT_FOUND.value(),

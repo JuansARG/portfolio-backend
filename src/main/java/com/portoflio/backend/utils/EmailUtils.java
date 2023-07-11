@@ -26,7 +26,7 @@ public class EmailUtils {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
         message.setTo(email);
-        message.setSubject("Verificación de cuenta");
+        message.setSubject("Verificación de cuenta.");
         message.setText("Por favor, verifica tu cuenta haciendo clic en el siguiente enlace: http://localhost:8080/api/v1/auth/".concat(String.valueOf(id)).concat("/verify-account"));
 
         javaMailSender.send(message);
@@ -47,7 +47,7 @@ public class EmailUtils {
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Cambio de contraseña exitoso.");
-        message.setText("La contraseña de la cuenta ".concat(email).concat(" ha sido actualizada"));
+        message.setText("La contraseña de la cuenta ".concat(email).concat(" ha sido actualizada."));
 
         javaMailSender.send(message);
     }

@@ -1,17 +1,20 @@
 package com.portoflio.backend.service.impl;
 
+import com.portoflio.backend.dto.request.SkillRequest;
 import com.portoflio.backend.dto.request.UserPortfolioRequest;
+import com.portoflio.backend.dto.request.UserPortfolioUpdateRequest;
 import com.portoflio.backend.dto.response.UserPortfolioResponse;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
-import com.portoflio.backend.mapper.UserPortfolioMapper;
-import com.portoflio.backend.model.ERole;
+import com.portoflio.backend.model.Skill;
+import com.portoflio.backend.model.enums.ERole;
 import com.portoflio.backend.model.Role;
 import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.exception.model.UserNotFoundException;
+import com.portoflio.backend.model.enums.TypeSkill;
+import com.portoflio.backend.repository.SkillRepository;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.UserPortfolioService;
 import com.portoflio.backend.utils.EmailUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,29 +24,33 @@ import java.util.Set;
 @Service
 public class UserPortfolioServiceImpl implements UserPortfolioService {
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
-    @Autowired
-    UserPortfolioMapper mapper;
-    @Autowired
-    UserPortfolioRepository userPortfolioRepository;
-    @Autowired
-    EmailUtils emailUtils;
+    private final PasswordEncoder passwordEncoder;
+    private final UserPortfolioRepository userPortfolioRepository;
+    private final SkillRepository skillRepository;
+    private final EmailUtils emailUtils;
+
+    public UserPortfolioServiceImpl(PasswordEncoder passwordEncoder, UserPortfolioRepository userPortfolioRepository, SkillRepository skillRepository, EmailUtils emailUtils) {
+        this.passwordEncoder = passwordEncoder;
+        this.userPortfolioRepository = userPortfolioRepository;
+        this.skillRepository = skillRepository;
+        this.emailUtils = emailUtils;
+    }
 
     @Override
     public List<UserPortfolioResponse> getAllUsers() throws UserNotFoundException {
         List<UserPortfolio> users = userPortfolioRepository.findAll();
         if ( users.isEmpty() ) throw new UserNotFoundException("No hay usuarios registrados.");
-        return users.stream()
-                .map((user) -> mapper.toDTO(user))
+        return users
+                .stream()
+                .map(UserPortfolioResponse::new)
                 .toList();
     }
 
     @Override
     public UserPortfolioResponse getUserById(Long id) throws UserNotFoundException {
         UserPortfolio user = userPortfolioRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("No hay existe un usuario con ID: " + id));
-        return mapper.toDTO(user);
+                .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
+        return new UserPortfolioResponse(user);
     }
 
     @Override
@@ -51,7 +58,7 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
         if( userPortfolioRepository.existsByEmail(userRequest.getEmail()) ){
             throw new UserNotFoundException("Ya existe un usuario con ese email.");
         }
-        UserPortfolio newUser = mapper.toUserPortfolio(userRequest);
+        UserPortfolio newUser = new UserPortfolio(userRequest);
         newUser.setVerified(false);
         newUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
 
@@ -64,9 +71,10 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
             roles.setName(ERole.INVITED);
             newUser.setRoles(Set.of(roles));
         }
+
         UserPortfolio userSaved = userPortfolioRepository.save(newUser);
         emailUtils.sendMessageToVerify(newUser.getEmail(), userSaved.getId());
-        return mapper.toDTO(userSaved);
+        return new UserPortfolioResponse(userSaved);
     }
 
     @Override
@@ -76,7 +84,7 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
     }
 
     @Override
-    public UserPortfolioResponse updateUser(Long id, UserPortfolioRequest userRequest) throws UserNotFoundException {
+    public UserPortfolioResponse updateUser(Long id, UserPortfolioUpdateRequest userRequest) throws UserNotFoundException {
         UserPortfolio userDB = userPortfolioRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
 
@@ -87,10 +95,8 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
         userDB.setTitle(userRequest.getTitle());
         userDB.setProfile(userRequest.getProfile());
         userDB.setImageURL(userRequest.getImageURL());
-        userDB.setHardSkills(userRequest.getHardSkills());
-        userDB.setSoftSkills(userRequest.getSoftSkills());
 
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
+        return new UserPortfolioResponse(userPortfolioRepository.save(userDB));
     }
 
     @Override
@@ -99,7 +105,7 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
         if ( title.isEmpty() ) throw new ArgumentInvalidException("El título no puede estar vacío.");
         userDB.setTitle(title);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
+        return new UserPortfolioResponse(userPortfolioRepository.save(userDB));
     }
 
     @Override
@@ -108,7 +114,7 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
         if ( profile.isEmpty() ) throw new ArgumentInvalidException("La descripción del perfil no puede estar vacío.");
         userDB.setProfile(profile);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
+        return new UserPortfolioResponse(userPortfolioRepository.save(userDB));
     }
 
     @Override
@@ -117,42 +123,6 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
         if ( urlImage.isEmpty() ) throw new ArgumentInvalidException("La url de la imagen no puede estar vacía.");
         userDB.setImageURL(urlImage);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
-    }
-
-    @Override
-    public UserPortfolioResponse updateUserHardSkills(Long id, Set<String> skills) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio userDB = userPortfolioRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
-        if ( skills.size() == 0 ) throw new ArgumentInvalidException("La habilidades técnicas no pueden estar vacías");
-        userDB.setHardSkills(skills);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
-    }
-
-    @Override
-    public UserPortfolioResponse updateUserSoftSkills(Long id, Set<String> skills) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio userDB = userPortfolioRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
-        if ( skills.size() == 0 ) throw new ArgumentInvalidException("Las habilidades blandas que desea agregar no pueden estar vacías");
-        userDB.setSoftSkills(skills);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
-    }
-
-    @Override
-    public UserPortfolioResponse addUserSoftSkills(Long id, List<String> skills) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio userDB = userPortfolioRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
-        if ( skills.size() == 0 ) throw new ArgumentInvalidException("Las habilidades blandas que desea agregar no pueden estar vacías");
-        userDB.addSoftSkills(skills);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
-    }
-
-    @Override
-    public UserPortfolioResponse addUserHardSkills(Long id, List<String> skills) throws UserNotFoundException, ArgumentInvalidException {
-        UserPortfolio userDB = userPortfolioRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
-        if ( skills.size() == 0 ) throw new ArgumentInvalidException("Las habilidades técnicas que desea agregar no pueden estar vacías");
-        userDB.addHardSkills(skills);
-        return mapper.toDTO(userPortfolioRepository.save(userDB));
+        return new UserPortfolioResponse(userPortfolioRepository.save(userDB));
     }
 }
