@@ -21,16 +21,21 @@ public class TrainingController {
         this.trainingService = trainingService;
     }
 
-    @PatchMapping("/add-to/{id}")
-    public ResponseEntity<UserPortfolioResponse> addTraining(@PathVariable Long id, @Valid @RequestBody TrainingRequest training) throws UserNotFoundException {
-        UserPortfolioResponse updateUser = trainingService.addTraining(id, training);
+    @PostMapping("/add-to/{id}")
+    public ResponseEntity<UserPortfolioResponse> addTraining(@PathVariable Long id, @Valid @RequestBody TrainingRequest trainingRequest) throws UserNotFoundException {
+        UserPortfolioResponse updateUser = trainingService.addTraining(id, trainingRequest);
         return ResponseEntity.status(HttpStatus.OK).body(updateUser);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<TrainingResponse> updateTraining(@PathVariable Long id, @Valid @RequestBody TrainingRequest training) throws UserNotFoundException, TrainingNotFoundException {
-        TrainingResponse updateTraining = trainingService.updateTraining(id, training);
+    public ResponseEntity<TrainingResponse> updateTraining(@PathVariable Long id, @Valid @RequestBody TrainingRequest trainingRequest) throws UserNotFoundException, TrainingNotFoundException {
+        TrainingResponse updateTraining = trainingService.updateTraining(id, trainingRequest);
         return ResponseEntity.status(HttpStatus.OK).body(updateTraining);
+    }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteTraining(@PathVariable Long id) throws TrainingNotFoundException {
+        trainingService.deleteTraining(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

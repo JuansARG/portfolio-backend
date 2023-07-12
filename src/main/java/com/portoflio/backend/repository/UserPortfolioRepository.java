@@ -8,7 +8,6 @@ import java.util.Optional;
 
 @RepositoryRestResource
 public interface UserPortfolioRepository extends JpaRepository<UserPortfolio, Long>{
-
     Optional<UserPortfolio> findByEmail(String email);
     boolean existsByEmail(String email);
 }

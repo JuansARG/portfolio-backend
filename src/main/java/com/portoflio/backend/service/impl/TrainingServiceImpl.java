@@ -32,21 +32,26 @@ public class TrainingServiceImpl implements TrainingService {
         UserPortfolio userDB = userPortfolioRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-        YearMonth yearMonthStartDate = YearMonth.parse(training.getStartDate(), formatter);
+        // esto sería la implementación si en el body recibiera una fecha por ejemplo: "08/2022"
+        DateTimeFormatter formatterOLD = DateTimeFormatter.ofPattern("MM/yyyy");
+//        YearMonth yearMonthStartDate = YearMonth.parse(training.getStartDate(), formatterOLD);
 
-        Training newTraining = trainingRepository.save(Training.builder()
-                .title(training.getTitle())
-                .educationEntity(training.getEducationEntity())
-                .inProgress(training.isInProgress())
-                .startDate(yearMonthStartDate.atDay(1))
-                .certificateURL(training.getCertificateURL())
-                .userPortfolio(userDB)
-                .build());
+        DateTimeFormatter formatterNEW = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        Training newTraining = trainingRepository.save(
+                Training.builder()
+                    .title(training.getTitle())
+                    .educationEntity(training.getEducationEntity())
+                    .inProgress(training.isInProgress())
+                    .startDate(LocalDate.parse(training.getStartDate(), formatterNEW))
+                    .certificateURL(training.getCertificateURL())
+                    .userPortfolio(userDB)
+                    .build()
+        );
 
         if(!newTraining.isInProgress()){
-            YearMonth yearMonthEndDate = YearMonth.parse(training.getEndDate(), formatter);
-            newTraining.setEndDate(yearMonthEndDate.atDay(1));
+//            YearMonth yearMonthEndDate = YearMonth.parse(training.getEndDate(), formatterOLD);
+            newTraining.setEndDate(LocalDate.parse(training.getEndDate(), formatterNEW));
             trainingRepository.save(newTraining);
         }
 
@@ -59,18 +64,22 @@ public class TrainingServiceImpl implements TrainingService {
         Training trainingDB = trainingRepository.findById(id)
                 .orElseThrow(() -> new TrainingNotFoundException("No existe una formación con ID: " + id));
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/yyyy");
-        YearMonth yearMonthStartDate = YearMonth.parse(training.getStartDate(), formatter);
-        YearMonth yearMonthEndDate = YearMonth.parse(training.getEndDate(), formatter);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 
         trainingDB.setTitle(training.getTitle());
         trainingDB.setEducationEntity(training.getEducationEntity());
         trainingDB.setInProgress(trainingDB.isInProgress());
-        trainingDB.setStartDate(yearMonthStartDate.atDay(1));
-        trainingDB.setEndDate(yearMonthEndDate.atDay(1));
+        trainingDB.setStartDate(LocalDate.parse(training.getStartDate(), formatter));
+        trainingDB.setEndDate(LocalDate.parse(training.getEndDate(), formatter));
         trainingDB.setCertificateURL(training.getCertificateURL());
 
         return new TrainingResponse(trainingRepository.save(trainingDB));
+    }
+
+    @Override
+    public void deleteTraining(Long id) throws TrainingNotFoundException {
+        if( !trainingRepository.existsById(id) ) throw new TrainingNotFoundException("No existe una formación con ID: " + id);
+        trainingRepository.deleteById(id);
     }
 }

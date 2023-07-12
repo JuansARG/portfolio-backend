@@ -11,4 +11,6 @@ public interface TrainingService {
     UserPortfolioResponse addTraining(Long id, TrainingRequest training) throws UserNotFoundException;
 
     TrainingResponse updateTraining(Long id, TrainingRequest training) throws UserNotFoundException, TrainingNotFoundException;
+
+    void deleteTraining(Long id) throws TrainingNotFoundException;
 }

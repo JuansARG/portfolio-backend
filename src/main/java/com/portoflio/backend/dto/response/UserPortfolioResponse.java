@@ -1,6 +1,5 @@
 package com.portoflio.backend.dto.response;
 
-import com.portoflio.backend.model.Skill;
 import com.portoflio.backend.model.UserPortfolio;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +23,7 @@ public class UserPortfolioResponse {
     private String imageURL;
     private List<SkillResponse> skills;
     private List<TrainingResponse> formations;
+    private List<ProjectResponse> projects;
 
     public UserPortfolioResponse(UserPortfolio user) {
         id = user.getId();
@@ -36,13 +35,32 @@ public class UserPortfolioResponse {
         title = user.getTitle();
         profile = user.getProfile();
         imageURL = user.getImageURL();
-        skills = user.getSkills()
-                .stream()
-                .map(SkillResponse::new)
-                .toList();
-        formations = user.getFormations()
-                .stream()
-                .map(TrainingResponse::new)
-                .toList();
+
+        if( user.getSkills() != null){
+            skills = user.getSkills().isEmpty()
+                    ? null
+                    : user.getSkills()
+                    .stream()
+                    .map(SkillResponse::new)
+                    .toList();
+        }
+
+        if( user.getFormations() != null) {
+            formations = user.getFormations().isEmpty()
+                    ? null
+                    : user.getFormations()
+                    .stream()
+                    .map(TrainingResponse::new)
+                    .toList();
+        }
+
+        if( user.getProjects() != null ){
+            projects = user.getProjects().isEmpty()
+                    ? null
+                    : user.getProjects()
+                    .stream()
+                    .map(ProjectResponse::new)
+                    .toList();
+        }
     }
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -30,5 +30,7 @@ public class UserPortfolioRequest {
     @Size(max = 1400, message = "La descripción es demasiado larga.")
     private String profile;
     private String imageURL;
-    private Set<SkillRequest> skills;
+    private List<SkillRequest> skills;
+    private List<TrainingRequest> formations;
+    private List<ProjectRequest> projects;
 }
