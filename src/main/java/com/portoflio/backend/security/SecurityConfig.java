@@ -3,9 +3,9 @@ package com.portoflio.backend.security;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.security.filter.JwtAuthenticationFilter;
 import com.portoflio.backend.security.filter.JwtAuthorizationFilter;
-import com.portoflio.backend.security.util.JwtUtil;
 import com.portoflio.backend.security.service.UserDetailsServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.portoflio.backend.security.util.JwtUtil;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,21 +19,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@AllArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    JwtUtil jwtUtil;
-    @Autowired
-    UserDetailsServiceImpl userDetailsServiceImpl;
-    @Autowired
-    JwtAuthorizationFilter jwtAuthorizationFilter;
-
-    @Autowired
-    UserPortfolioRepository userPortfolioRepository;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final UserPortfolioRepository userPortfolioRepository;
 
 
     @Bean
@@ -51,6 +52,8 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/v1/auth/*/verify-account").permitAll();
                     auth.requestMatchers("/api/v1/auth/password-reset-request").permitAll();
                     auth.requestMatchers("/api/v1/auth/password-reset").permitAll();
+                    auth.requestMatchers("/api/v1/contact").permitAll();
+                    auth.requestMatchers("/api/v1/users/*").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
@@ -73,6 +76,31 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    CorsFilter corsFilter() {
+        CorsConfiguration corsConfiguration = new CorsConfiguration();
+
+        corsConfiguration.setAllowedOrigins(
+                List.of("http://localhost:3000")
+        );
+
+        corsConfiguration.setExposedHeaders(
+                List.of("Access-Control-Allow-Origin")
+        );
+
+        corsConfiguration.setAllowedHeaders(
+                List.of("Content-Type")
+        );
+
+        corsConfiguration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
+        );
+
+        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+        urlBasedCorsConfigurationSource.registerCorsConfiguration("/api/v1/**", corsConfiguration);
+        return new CorsFilter(urlBasedCorsConfigurationSource);
     }
 
 }

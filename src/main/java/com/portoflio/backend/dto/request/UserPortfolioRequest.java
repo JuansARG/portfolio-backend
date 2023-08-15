@@ -12,7 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class UserPortfolioRequest {
-
     @NotNull(message = "El nombre es obligatorio.")
     @NotEmpty(message = "El nombre es obligatorio.")
     private String name;

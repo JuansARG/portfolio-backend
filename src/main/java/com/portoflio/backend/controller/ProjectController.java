@@ -7,20 +7,20 @@ import com.portoflio.backend.exception.model.ProjectNotFoundException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.service.ProjectService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/api/v1/project")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+@AllArgsConstructor
 public class ProjectController {
 
     private final ProjectService projectService;
-
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
 
     @PostMapping("/add-to/{id}")
     public ResponseEntity<UserPortfolioResponse> addProject(@PathVariable Long id, @Valid @RequestBody ProjectRequest projectRequest) throws UserNotFoundException {

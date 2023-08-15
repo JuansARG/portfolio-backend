@@ -10,18 +10,15 @@ import com.portoflio.backend.model.enums.TypeSkill;
 import com.portoflio.backend.repository.SkillRepository;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.SkillService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class SkillServiceImpl implements SkillService {
 
     private final UserPortfolioRepository userPortfolioRepository;
     private final SkillRepository skillRepository;
-
-    public SkillServiceImpl(UserPortfolioRepository userPortfolioRepository, SkillRepository skillRepository) {
-        this.userPortfolioRepository = userPortfolioRepository;
-        this.skillRepository = skillRepository;
-    }
 
     @Override
     public UserPortfolioResponse addSkill(Long id, SkillRequest skill) throws UserNotFoundException, ArgumentInvalidException {

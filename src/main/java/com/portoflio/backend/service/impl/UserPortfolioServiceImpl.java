@@ -1,20 +1,17 @@
 package com.portoflio.backend.service.impl;
 
-import com.portoflio.backend.dto.request.SkillRequest;
 import com.portoflio.backend.dto.request.UserPortfolioRequest;
 import com.portoflio.backend.dto.request.UserPortfolioUpdateRequest;
 import com.portoflio.backend.dto.response.UserPortfolioResponse;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
-import com.portoflio.backend.model.Skill;
-import com.portoflio.backend.model.enums.ERole;
+import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.model.Role;
 import com.portoflio.backend.model.UserPortfolio;
-import com.portoflio.backend.exception.model.UserNotFoundException;
-import com.portoflio.backend.model.enums.TypeSkill;
-import com.portoflio.backend.repository.SkillRepository;
+import com.portoflio.backend.model.enums.ERole;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.UserPortfolioService;
 import com.portoflio.backend.utils.EmailUtils;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +19,12 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class UserPortfolioServiceImpl implements UserPortfolioService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserPortfolioRepository userPortfolioRepository;
-    private final SkillRepository skillRepository;
     private final EmailUtils emailUtils;
-
-    public UserPortfolioServiceImpl(PasswordEncoder passwordEncoder, UserPortfolioRepository userPortfolioRepository, SkillRepository skillRepository, EmailUtils emailUtils) {
-        this.passwordEncoder = passwordEncoder;
-        this.userPortfolioRepository = userPortfolioRepository;
-        this.skillRepository = skillRepository;
-        this.emailUtils = emailUtils;
-    }
 
     @Override
     public List<UserPortfolioResponse> getAllUsers() throws UserNotFoundException {

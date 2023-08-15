@@ -10,18 +10,15 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@ToString
 @Entity
 @Table(name = "Skills")
 public class Skill {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     @Enumerated(EnumType.STRING)
     private TypeSkill typeSkill;
-
 
     public Skill(SkillRequest skill) {
         title = skill.getTitle();

@@ -1,34 +1,34 @@
 package com.portoflio.backend.utils;
 
+import com.portoflio.backend.dto.request.ContactForm;
 import jakarta.mail.MessagingException;
-import jakarta.mail.internet.ContentType;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.AbstractDocument;
 
 
 @Service
 public class EmailUtils {
-
     @Autowired
     private JavaMailSender javaMailSender;
     @Value("${spring.mail.username}")
     private String fromMail;
+
+    @Value("${spring.url.dev}")
+    private String URL_DEV;
 
     public void sendMessageToVerify(String email, Long id){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Verificación de cuenta.");
-        message.setText("Por favor, verifica tu cuenta haciendo clic en el siguiente enlace: http://localhost:8080/api/v1/auth/".concat(String.valueOf(id)).concat("/verify-account"));
-
+        message.setText(String.format("Por favor, verifica tu cuenta haciendo clic en el siguiente enlace: %s/api/v1/auth/%d/verify-account", URL_DEV, id));
         javaMailSender.send(message);
     }
 
@@ -37,7 +37,7 @@ public class EmailUtils {
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Verificación exitosa.");
-        message.setText("La cuenta con email ".concat(email).concat(" ha sido verificada con éxito."));
+        message.setText(String.format("La cuenta con email %s ha sido verificada con éxito.", email));
 
         javaMailSender.send(message);
     }
@@ -47,7 +47,7 @@ public class EmailUtils {
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Cambio de contraseña exitoso.");
-        message.setText("La contraseña de la cuenta ".concat(email).concat(" ha sido actualizada."));
+        message.setText(String.format("La contraseña de la cuenta %s ha sido actualizada.", email));
 
         javaMailSender.send(message);
     }
@@ -73,14 +73,45 @@ public class EmailUtils {
     }
 
     public void sendLinkToResetPassword(String email, String code) {
-        String link = "http://localhost:8080/api/v1/auth/password-reset?email=" + email + "&code=" + code;
+        String linkFormat = String.format("%s/api/v1/auth/password-reset?email=%s&code=%s", URL_DEV, email, code);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Solicitud para restablecer contraseña.");
-        message.setText("Para restablecer la contraseña, realice una petición post al siguiente link: " + link +
-                        " que debera contener en su body una propiedad llamada newPassword...");
+        message.setText(String.format("Para restablecer la contraseña, realice una petición post al siguiente link: %s " +
+                "que debera contener en su body una propiedad llamada newPassword...", linkFormat));
 
         javaMailSender.send(message);
+    }
+
+    public void automaticResponseEmail(ContactForm contactForm){
+        javaMailSender.send(new MimeMessagePreparator() {
+            @Override
+            public void prepare(@NotNull MimeMessage mimeMessage) throws Exception {
+                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+                helper.setFrom(fromMail);
+                helper.setTo(contactForm.getEmail());
+                helper.setSubject("Respuesta Automática - Gracias por ponerte en contacto conmigo!");
+                helper.setText(String.format("""
+                                    <p>Estimado/a <b>%s</b>,</p>
+                                    <p>He recibido su mensaje y le agradezco su interés en mi servicios.</p>
+                                    <p>Revisare su mensaje y me pondré en contacto con usted lo antes posible.</p>
+                                    <p>¡Gracias nuevamente por su interés en mí!</p>
+                                    <p>Saludos cordiales,</p>
+                                    <p>Juan Ignacio Sarmiento</p>""", contactForm.getName()), true);
+            }
+        });
+    }
+
+    public void sendMailToContact(ContactForm contactForm) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(fromMail);
+        message.setTo(fromMail);
+        message.setSubject(String.format("Mensaje de: <%s> Asunto: %s", contactForm.getEmail(), contactForm.getSubject()));
+        message.setText(contactForm.getMessage());
+        message.setCc();
+
+        javaMailSender.send(message);
+        automaticResponseEmail(contactForm);
     }
 }

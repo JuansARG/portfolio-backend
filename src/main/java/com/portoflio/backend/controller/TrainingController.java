@@ -7,19 +7,19 @@ import com.portoflio.backend.exception.model.TrainingNotFoundException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.service.TrainingService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/training")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+@AllArgsConstructor
 public class TrainingController {
 
     private final TrainingService trainingService;
-
-    public TrainingController(TrainingService trainingService) {
-        this.trainingService = trainingService;
-    }
 
     @PostMapping("/add-to/{id}")
     public ResponseEntity<UserPortfolioResponse> addTraining(@PathVariable Long id, @Valid @RequestBody TrainingRequest trainingRequest) throws UserNotFoundException {

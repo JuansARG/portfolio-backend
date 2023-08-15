@@ -1,27 +1,23 @@
 package com.portoflio.backend.controller;
 
-import com.portoflio.backend.dto.request.UserPortfolioRequest;
 import com.portoflio.backend.dto.request.UserPortfolioUpdateRequest;
 import com.portoflio.backend.dto.response.UserPortfolioResponse;
 import com.portoflio.backend.exception.model.ArgumentInvalidException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.service.UserPortfolioService;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@AllArgsConstructor
 public class UserPortfolioController {
 
     private final UserPortfolioService userPortfolioService;
-
-    public UserPortfolioController(UserPortfolioService userPortfolioService) {
-        this.userPortfolioService = userPortfolioService;
-    }
 
     @GetMapping("/all")
     public ResponseEntity<List<UserPortfolioResponse>> getAllUsers() throws UserNotFoundException {
@@ -36,7 +32,6 @@ public class UserPortfolioController {
     }
 
     @DeleteMapping("/{id}/delete")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) throws UserNotFoundException {
         userPortfolioService.deleteUser(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

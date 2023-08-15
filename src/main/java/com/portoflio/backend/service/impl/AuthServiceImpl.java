@@ -7,9 +7,8 @@ import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.AuthService;
 import com.portoflio.backend.utils.EmailUtils;
-import jakarta.mail.MessagingException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +17,12 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    UserPortfolioRepository userPortfolioRepository;
-
-    @Autowired
-    EmailUtils emailUtils;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final UserPortfolioRepository userPortfolioRepository;
+    private final EmailUtils emailUtils;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void verifyAccount(Long id) throws UserNotFoundException {

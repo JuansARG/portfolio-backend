@@ -22,7 +22,7 @@ public class JwtUtil {
     @Value("${jwt.secret.key}")
     private String JWT_SECRET_KEY;
     @Value("${jwt.time.expiration}")
-    private String JWT_TIME_EXPIRATION; // 1 dia
+    private String JWT_TIME_EXPIRATION; // 20min
 
     // Generar token de acceso
     public String generateAccessToken(UserPortfolio userPortfolio){
@@ -30,6 +30,18 @@ public class JwtUtil {
         claims.put("id", userPortfolio.getId());
         claims.put("roles", userPortfolio.getRoles().stream().map(Role::getName).toList());
 
+//        claims.put("name", userPortfolio.getName());
+//        claims.put("surname", userPortfolio.getSurname());
+//        claims.put("age", userPortfolio.getAge());
+//        claims.put("title", userPortfolio.getTitle());
+//        claims.put("profile", userPortfolio.getProfile());
+//        claims.put("imageURL", userPortfolio.getImageURL());
+//        claims.put("skills", userPortfolio.getSkills().stream().map(SkillResponse::new).toList());
+//        claims.put("formations", userPortfolio.getFormations().stream().map(TrainingResponse::new).toList());
+//        claims.put("projects", userPortfolio.getProjects().stream().map(ProjectResponse::new).toList());
+
+        // el token tiene un límite de caracteres, por lo tanto, no puedo mandar todos los datos como quisiera
+        // en consecuencia para obtener todos los datos bastara con hacer una petición GetUserById al controlador
         return Jwts
                 .builder()
                 .setSubject(userPortfolio.getEmail())

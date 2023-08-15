@@ -10,22 +10,18 @@ import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.repository.TrainingRepository;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.TrainingService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 
 @Service
+@AllArgsConstructor
 public class TrainingServiceImpl implements TrainingService {
 
     private final UserPortfolioRepository userPortfolioRepository;
     private final TrainingRepository trainingRepository;
-
-    public TrainingServiceImpl(UserPortfolioRepository userPortfolioRepository, TrainingRepository trainingRepository) {
-        this.userPortfolioRepository = userPortfolioRepository;
-        this.trainingRepository = trainingRepository;
-    }
 
     @Override
     public UserPortfolioResponse addTraining(Long id, TrainingRequest training) throws UserNotFoundException {

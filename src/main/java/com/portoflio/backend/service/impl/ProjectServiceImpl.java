@@ -10,18 +10,15 @@ import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.repository.ProjectRepository;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.ProjectService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
 
     private final UserPortfolioRepository userPortfolioRepository;
     private final ProjectRepository projectRepository;
-
-    public ProjectServiceImpl(UserPortfolioRepository userPortfolioRepository, ProjectRepository projectRepository) {
-        this.userPortfolioRepository = userPortfolioRepository;
-        this.projectRepository = projectRepository;
-    }
 
     @Override
     public UserPortfolioResponse addProject(Long id, ProjectRequest projectRequest) throws UserNotFoundException {

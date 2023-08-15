@@ -3,15 +3,12 @@ package com.portoflio.backend.model;
 import com.portoflio.backend.dto.request.UserPortfolioRequest;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@DynamicInsert
-@DynamicUpdate
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -20,7 +17,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class UserPortfolio {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,8 +46,10 @@ public class UserPortfolio {
     )
     @Builder.Default
     private Set<Skill> skills = new HashSet<>();
+
     @Column(name = "password_reset_code")
     private String passwordResetCode;
+
     @ManyToMany(
             fetch = FetchType.EAGER,
             cascade = CascadeType.PERSIST,
@@ -68,7 +66,7 @@ public class UserPortfolio {
 
     @OneToMany(
             mappedBy = "userPortfolio",
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
@@ -77,7 +75,7 @@ public class UserPortfolio {
 
     @OneToMany(
             mappedBy = "userPortfolio",
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = CascadeType.PERSIST,
             orphanRemoval = true
     )
