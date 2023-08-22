@@ -17,4 +17,6 @@ public class Role {
     private Long id;
     @Enumerated(EnumType.STRING)
     private ERole name;
+    @ManyToOne
+    private UserPortfolio userPortfolio;
 }

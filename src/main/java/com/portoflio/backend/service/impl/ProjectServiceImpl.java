@@ -2,7 +2,6 @@ package com.portoflio.backend.service.impl;
 
 import com.portoflio.backend.dto.request.ProjectRequest;
 import com.portoflio.backend.dto.response.ProjectResponse;
-import com.portoflio.backend.dto.response.UserPortfolioResponse;
 import com.portoflio.backend.exception.model.ProjectNotFoundException;
 import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.model.Project;
@@ -13,6 +12,9 @@ import com.portoflio.backend.service.ProjectService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @AllArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -21,7 +23,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
 
     @Override
-    public UserPortfolioResponse addProject(Long id, ProjectRequest projectRequest) throws UserNotFoundException {
+    public ProjectResponse addProject(Long id, ProjectRequest projectRequest) throws UserNotFoundException {
         UserPortfolio userDB = userPortfolioRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("No existe un usuario con ID: " + id));
 
@@ -36,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
                         .build()
         );
 
-        return new UserPortfolioResponse(userDB);
+        return new ProjectResponse(newProject);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project projectDB = projectRepository.findById(id)
                 .orElseThrow(() -> new ProjectNotFoundException("No existe con proyecto con ID: " + id));
 
-        projectDB.setTitle(projectDB.getTitle());
+        projectDB.setTitle(projectRequest.getTitle());
         projectDB.setDescription(projectRequest.getDescription());
         projectDB.setImageURL(projectRequest.getImageURL());
         projectDB.setRepositoryURL(projectRequest.getRepositoryURL());
@@ -54,8 +56,20 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void deleteProject(Long id) throws ProjectNotFoundException {
-        if( !projectRepository.existsById(id) ) throw new ProjectNotFoundException("No existe un projecto con ID: " + id);
-        projectRepository.deleteById(id);
+    public void deleteProject(Long idProject, Long idUser) throws ProjectNotFoundException, UserNotFoundException {
+        if( !projectRepository.existsById(idProject) ) throw new ProjectNotFoundException("No existe un projecto con ID: " + idProject);
+
+        Optional<UserPortfolio> userDB = userPortfolioRepository.findById(idUser);
+        if (userDB.isEmpty()) throw new UserNotFoundException("No existe un usuario con ID: " + idUser);
+
+        userDB.get().setProjects(
+                userDB.get().getProjects()
+                        .stream()
+                        .filter(project -> !project.getId().equals(idProject))
+                        .collect(Collectors.toSet())
+        );
+
+        userPortfolioRepository.save(userDB.get());
+        projectRepository.deleteById(idProject);
     }
 }

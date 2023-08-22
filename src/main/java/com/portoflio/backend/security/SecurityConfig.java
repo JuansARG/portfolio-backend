@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,14 +47,10 @@ public class SecurityConfig {
 
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/api/v1/auth/signup").permitAll();
-                    auth.requestMatchers("/api/v1/auth/*/verify-account").permitAll();
-                    auth.requestMatchers("/api/v1/auth/password-reset-request").permitAll();
-                    auth.requestMatchers("/api/v1/auth/password-reset").permitAll();
+                    auth.requestMatchers("/api/v1/auth/login").permitAll();
                     auth.requestMatchers("/api/v1/contact").permitAll();
-                    auth.requestMatchers("/api/v1/users/*").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {
@@ -82,16 +79,18 @@ public class SecurityConfig {
     CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
 
+        corsConfiguration.setAllowCredentials(true);
+
         corsConfiguration.setAllowedOrigins(
-                List.of("http://localhost:3000")
+                List.of("http://localhost:5173", "https://spiffy-speculoos-d874f8.netlify.app")
         );
 
         corsConfiguration.setExposedHeaders(
-                List.of("Access-Control-Allow-Origin")
+                List.of("*")
         );
 
         corsConfiguration.setAllowedHeaders(
-                List.of("Content-Type")
+                List.of("*")
         );
 
         corsConfiguration.setAllowedMethods(

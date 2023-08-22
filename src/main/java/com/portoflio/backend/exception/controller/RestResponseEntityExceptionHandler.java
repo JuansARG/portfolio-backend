@@ -64,6 +64,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
     }
 
+    @ExceptionHandler(SkillNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<ErrorMessage> handleSkillNotFoundException(SkillNotFoundException exception){
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.NOT_FOUND,
+                HttpStatus.NOT_FOUND.value(),
+                exception.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+    }
+
     @ExceptionHandler(ArgumentInvalidException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<ErrorMessage> handleArgumentInvalidException(ArgumentInvalidException exception){

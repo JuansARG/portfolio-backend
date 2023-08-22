@@ -3,13 +3,11 @@ package com.portoflio.backend.utils;
 import com.portoflio.backend.dto.request.ContactForm;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 
 
@@ -28,7 +26,7 @@ public class EmailUtils {
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Verificación de cuenta.");
-        message.setText(String.format("Por favor, verifica tu cuenta haciendo clic en el siguiente enlace: %s/api/v1/auth/%d/verify-account", URL_DEV, id));
+        message.setText(String.format("Por favor, verifica tu cuenta haciendo una petición post al siguiente enlace: %s/api/v1/auth/%d/verify-account", URL_DEV, id));
         javaMailSender.send(message);
     }
 
@@ -85,21 +83,18 @@ public class EmailUtils {
     }
 
     public void automaticResponseEmail(ContactForm contactForm){
-        javaMailSender.send(new MimeMessagePreparator() {
-            @Override
-            public void prepare(@NotNull MimeMessage mimeMessage) throws Exception {
-                MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-                helper.setFrom(fromMail);
-                helper.setTo(contactForm.getEmail());
-                helper.setSubject("Respuesta Automática - Gracias por ponerte en contacto conmigo!");
-                helper.setText(String.format("""
-                                    <p>Estimado/a <b>%s</b>,</p>
-                                    <p>He recibido su mensaje y le agradezco su interés en mi servicios.</p>
-                                    <p>Revisare su mensaje y me pondré en contacto con usted lo antes posible.</p>
-                                    <p>¡Gracias nuevamente por su interés en mí!</p>
-                                    <p>Saludos cordiales,</p>
-                                    <p>Juan Ignacio Sarmiento</p>""", contactForm.getName()), true);
-            }
+        javaMailSender.send(mimeMessage -> {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setFrom(fromMail);
+            helper.setTo(contactForm.getEmail());
+            helper.setSubject("Respuesta Automática - Gracias por ponerte en contacto conmigo!");
+            helper.setText(String.format("""
+                                <p>Estimado/a <b>%s</b>,</p>
+                                <p>He recibido su mensaje y le agradezco su interés en mi servicios.</p>
+                                <p>Revisare su mensaje y me pondré en contacto con usted lo antes posible.</p>
+                                <p>¡Gracias nuevamente por su interés en mí!</p>
+                                <p>Saludos cordiales,</p>
+                                <p>Juan Ignacio Sarmiento</p>""", contactForm.getName()), true);
         });
     }
 

@@ -8,6 +8,7 @@ import com.portoflio.backend.exception.model.UserNotFoundException;
 import com.portoflio.backend.model.Role;
 import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.model.enums.ERole;
+import com.portoflio.backend.repository.RoleRepository;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import com.portoflio.backend.service.UserPortfolioService;
 import com.portoflio.backend.utils.EmailUtils;
@@ -24,6 +25,7 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserPortfolioRepository userPortfolioRepository;
+    private final RoleRepository roleRepository;
     private final EmailUtils emailUtils;
 
     @Override
@@ -63,6 +65,9 @@ public class UserPortfolioServiceImpl implements UserPortfolioService {
         }
 
         UserPortfolio userSaved = userPortfolioRepository.save(newUser);
+        roles.setUserPortfolio(userSaved);
+        roleRepository.save(roles);
+
         emailUtils.sendMessageToVerify(newUser.getEmail(), userSaved.getId());
         return new UserPortfolioResponse(userSaved);
     }

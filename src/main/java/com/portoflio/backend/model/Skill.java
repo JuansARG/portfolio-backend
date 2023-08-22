@@ -19,6 +19,8 @@ public class Skill {
     private String title;
     @Enumerated(EnumType.STRING)
     private TypeSkill typeSkill;
+    @ManyToOne
+    private UserPortfolio userPortfolio;
 
     public Skill(SkillRequest skill) {
         title = skill.getTitle();

@@ -33,16 +33,10 @@ public class UserPortfolio {
     @Column(name = "imagen_url")
     private String imageURL;
 
-    @ManyToMany(
+    @OneToMany(
+            mappedBy = "userPortfolio",
             fetch = FetchType.EAGER,
-            cascade = CascadeType.PERSIST,
-            targetEntity = Skill.class
-    )
-    @JoinTable(
-            name = "user_skills",
-            joinColumns =
-                    @JoinColumn(name = "user_id"),
-                    inverseJoinColumns = @JoinColumn(name = "skill_id")
+            cascade = CascadeType.ALL
     )
     @Builder.Default
     private Set<Skill> skills = new HashSet<>();
@@ -50,16 +44,10 @@ public class UserPortfolio {
     @Column(name = "password_reset_code")
     private String passwordResetCode;
 
-    @ManyToMany(
+    @OneToMany(
+            mappedBy = "userPortfolio",
             fetch = FetchType.EAGER,
-            cascade = CascadeType.PERSIST,
-            targetEntity = Role.class
-    )
-    @JoinTable(
-            name = "user_roles",
-            joinColumns =
-            @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
+            cascade = CascadeType.ALL
     )
     @Builder.Default
     private Set<Role> roles = new HashSet<>();
@@ -67,8 +55,7 @@ public class UserPortfolio {
     @OneToMany(
             mappedBy = "userPortfolio",
             fetch = FetchType.EAGER,
-            cascade = CascadeType.PERSIST,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     @Builder.Default
     private Set<Training> formations = new HashSet<>();
@@ -76,8 +63,7 @@ public class UserPortfolio {
     @OneToMany(
             mappedBy = "userPortfolio",
             fetch = FetchType.EAGER,
-            cascade = CascadeType.PERSIST,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     @Builder.Default
     private Set<Project> projects = new HashSet<>();
@@ -125,4 +111,5 @@ public class UserPortfolio {
     public void addSkill(Skill skill){
         skills.add(skill);
     }
+    public void addTraining(Training training){ formations.add(training); }
 }

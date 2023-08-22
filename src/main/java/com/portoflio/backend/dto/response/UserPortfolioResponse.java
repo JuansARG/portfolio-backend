@@ -40,27 +40,27 @@ public class UserPortfolioResponse {
             skills = user.getSkills().isEmpty()
                     ? null
                     : user.getSkills()
-                    .stream()
-                    .map(SkillResponse::new)
-                    .toList();
+                        .stream()
+                        .map(SkillResponse::new)
+                        .toList();
         }
 
         if( user.getFormations() != null) {
             formations = user.getFormations().isEmpty()
                     ? null
                     : user.getFormations()
-                    .stream()
-                    .map(TrainingResponse::new)
-                    .toList();
+                        .stream()
+                        .map(TrainingResponse::new)
+                        .toList();
         }
 
         if( user.getProjects() != null ){
             projects = user.getProjects().isEmpty()
                     ? null
                     : user.getProjects()
-                    .stream()
-                    .map(ProjectResponse::new)
-                    .toList();
+                        .stream()
+                        .map(ProjectResponse::new)
+                        .toList();
         }
     }
 }
