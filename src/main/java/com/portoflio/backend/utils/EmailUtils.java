@@ -18,15 +18,15 @@ public class EmailUtils {
     @Value("${spring.mail.username}")
     private String fromMail;
 
-    @Value("${spring.url.dev}")
-    private String URL_DEV;
+    @Value("${spring.url.deploy}")
+    private String URL_DEPLOY;
 
     public void sendMessageToVerify(String email, Long id){
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
         message.setTo(email);
         message.setSubject("Verificación de cuenta.");
-        message.setText(String.format("Por favor, verifica tu cuenta haciendo una petición post al siguiente enlace: %s/api/v1/auth/%d/verify-account", URL_DEV, id));
+        message.setText(String.format("Por favor, verifica tu cuenta haciendo una petición post al siguiente enlace: %s/api/v1/auth/%d/verify-account", URL_DEPLOY, id));
         javaMailSender.send(message);
     }
 
@@ -71,7 +71,7 @@ public class EmailUtils {
     }
 
     public void sendLinkToResetPassword(String email, String code) {
-        String linkFormat = String.format("%s/api/v1/auth/password-reset?email=%s&code=%s", URL_DEV, email, code);
+        String linkFormat = String.format("%s/api/v1/auth/password-reset?email=%s&code=%s", URL_DEPLOY, email, code);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromMail);
         message.setTo(email);

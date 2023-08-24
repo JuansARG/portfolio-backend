@@ -1,0 +1,60 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    active: prod
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: juansarmientog96@gmail.com
+    password: irkadrdqnxtdmjqq
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+jwt:
+  secret:
+    key: 3630313532303530373220333438353134393331383535332020383135383835
+  time:
+    expiration: 1200000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/portfolio
+    username: postgres
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  url:
+    deploy: http://localhost:8080
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://dpg-cjjs36mphtvs73a6avf0-a.oregon-postgres.render.com/portfolio_database_r3bv
+    username: portfolio_database_r3bv_user
+    password: HrR53WXsoAjQsbQ2MgubMkCfNW6uQmee
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  url:
+    deploy: http://localhost:8080
