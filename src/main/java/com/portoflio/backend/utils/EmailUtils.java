@@ -18,7 +18,7 @@ public class EmailUtils {
     @Value("${spring.mail.username}")
     private String fromMail;
 
-    @Value("${spring.url.deploy}")
+    @Value("${spring.url.backend.deploy}")
     private String URL_DEPLOY;
 
     public void sendMessageToVerify(String email, Long id){

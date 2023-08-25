@@ -5,7 +5,7 @@ import com.portoflio.backend.security.filter.JwtAuthenticationFilter;
 import com.portoflio.backend.security.filter.JwtAuthorizationFilter;
 import com.portoflio.backend.security.service.UserDetailsServiceImpl;
 import com.portoflio.backend.security.util.JwtUtil;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,18 +29,31 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-@AllArgsConstructor
 public class SecurityConfig {
+
+    @Value("${url.front.dev}")
+    private String URL_FRONT_DEV;
+    @Value("${url.front.prod}")
+    private String URL_FRONT_PROD;
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsServiceImpl;
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
     private final UserPortfolioRepository userPortfolioRepository;
 
+    public SecurityConfig(
+            JwtUtil jwtUtil,
+            UserDetailsServiceImpl userDetailsServiceImpl,
+            JwtAuthorizationFilter jwtAuthorizationFilter,
+            UserPortfolioRepository userPortfolioRepository) {
+        this.jwtUtil = jwtUtil;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
+        this.jwtAuthorizationFilter = jwtAuthorizationFilter;
+        this.userPortfolioRepository = userPortfolioRepository;
+    }
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) throws Exception {
-
         JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(jwtUtil, userPortfolioRepository);
         jwtAuthenticationFilter.setAuthenticationManager(authenticationManager);
         jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/auth/login");
@@ -82,7 +95,7 @@ public class SecurityConfig {
         corsConfiguration.setAllowCredentials(true);
 
         corsConfiguration.setAllowedOrigins(
-                List.of("http://localhost:5173", "https://spiffy-speculoos-d874f8.netlify.app")
+                List.of(URL_FRONT_DEV, URL_FRONT_PROD)
         );
 
         corsConfiguration.setExposedHeaders(

@@ -2,12 +2,12 @@ server:
   port: 8080
 spring:
   profiles:
-    active: prod
+    active: dev
   mail:
     host: smtp.gmail.com
     port: 587
-    username: juansarmientog96@gmail.com
-    password: irkadrdqnxtdmjqq
+    username: ${mail.username}
+    password: ${mail.password}
     properties:
       mail:
         smtp:
@@ -16,19 +16,22 @@ spring:
             enable: true
 jwt:
   secret:
-    key: 3630313532303530373220333438353134393331383535332020383135383835
+    key: ${jwt.secret.key}
   time:
     expiration: 1200000
-
+url:
+  front:
+    dev: ${url.frontend.dev}
+    prod: ${url.frontend.prod}
 ---
 spring:
   config:
     activate:
       on-profile: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/portfolio
-    username: postgres
-    password: root
+    url: jdbc:postgresql://${database.dev.url}/${database.dev.name}
+    username: ${database.dev.username}
+    password: ${database.dev.password}
   jpa:
     properties:
       hibernate:
@@ -38,16 +41,17 @@ spring:
       ddl-auto: update
     show-sql: true
   url:
-    deploy: http://localhost:8080
+    backend:
+      deploy: ${url.backend.dev}
 ---
 spring:
   config:
     activate:
       on-profile: prod
   datasource:
-    url: jdbc:postgresql://dpg-cjjs36mphtvs73a6avf0-a.oregon-postgres.render.com/portfolio_database_r3bv
-    username: portfolio_database_r3bv_user
-    password: HrR53WXsoAjQsbQ2MgubMkCfNW6uQmee
+    url: jdbc:postgresql://${database.prod.url}/${database.prod.name}
+    username: ${database.prod.username}
+    password: ${database.prod.password}
   jpa:
     properties:
       hibernate:
@@ -57,4 +61,5 @@ spring:
       ddl-auto: update
     show-sql: true
   url:
-    deploy: http://localhost:8080
+    backend:
+      deploy: ${url.backend.prod}
