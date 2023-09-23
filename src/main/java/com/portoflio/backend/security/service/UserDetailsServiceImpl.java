@@ -3,7 +3,6 @@ package com.portoflio.backend.security.service;
 import com.portoflio.backend.model.UserPortfolio;
 import com.portoflio.backend.repository.UserPortfolioRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

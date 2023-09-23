@@ -66,7 +66,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             String token = jwtUtil.generateAccessToken(userPortfolio);
 
             response.addHeader("Authorization", token);
-
             httpResponse.put("token", token);
             httpResponse.put("message", "Autenticación correcta");
             httpResponse.put("status", 200);
